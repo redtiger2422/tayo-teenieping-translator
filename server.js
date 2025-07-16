@@ -15,15 +15,23 @@ app.post('/translate', (req, res) => {
   
   const { text, from, to } = req.body;
   
-  // 임시 번역 결과 (나중에 OpenAI API로 교체)
+  // 입력값 확인
+  console.log('받은 텍스트:', text);
+  console.log('번역 방향:', from, '→', to);
+  
+  // 임시 번역 결과
   let translatedText = '';
   
-  if (from === 'en' && to === 'ko') {
-    translatedText = '그녀는 귀여워요.'; // 임시 한국어 번역
-  } else if (from === 'ko' && to === 'en') {
-    translatedText = 'She is cute.'; // 임시 영어 번역
+  if (text) {
+    if (from === 'ko' && to === 'en') {
+      translatedText = 'She is cute.'; // 임시 영어 번역
+    } else if (from === 'en' && to === 'ko') {
+      translatedText = '그녀는 귀여워요.'; // 임시 한국어 번역
+    } else {
+      translatedText = '번역 기능 구현 중입니다...';
+    }
   } else {
-    translatedText = '번역 기능 구현 중입니다...';
+    translatedText = '텍스트를 입력해주세요.';
   }
   
   res.json({
