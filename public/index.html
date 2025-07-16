@@ -24,8 +24,6 @@
       overflow: hidden;
     }
     
-    /* 배경 장식 이미지들 제거 */
-    
     #translatorContainer {
       width: 100%;
       height: 100%;
@@ -73,14 +71,6 @@
       transform: scale(1.1);
     }
     
-    .character-img:nth-child(1) {
-      animation-delay: 0s;
-    }
-    
-    .character-img:nth-child(5) {
-      animation-delay: 1.5s;
-    }
-    
     @keyframes float {
       0%, 100% { transform: translateY(0px); }
       50% { transform: translateY(-10px); }
@@ -109,7 +99,6 @@
       font-weight: bold;
       margin: 0 0 10px 0;
       text-shadow: 0 1px 5px rgba(255,255,255,0.4);
-      animation: bounce 2.2s infinite;
     }
     
     #titleSection p {
@@ -117,19 +106,6 @@
       font-size: 1.1em;
       margin: 0;
       opacity: 0.8;
-    }
-    
-    @keyframes bounce {
-      0% { transform: translateY(0); }
-      15% { transform: translateY(-6px); }
-      30% { transform: translateY(0); }
-      50% { transform: translateY(-4px); }
-      70% { transform: translateY(0); }
-    }
-    
-    /* API 키 섹션 완전 숨기기 */
-    #apiKeySection {
-      display: none;
     }
     
     #translationSection {
@@ -170,10 +146,6 @@
       box-shadow: 0 2px 10px rgba(102, 181, 246, 0.3);
     }
     
-    .lang-btn.active:hover {
-      background: linear-gradient(45deg, #5aa3f0, #2976cc);
-    }
-    
     .translation-container {
       display: flex;
       gap: 20px;
@@ -185,18 +157,6 @@
       flex: 1;
       min-width: 250px;
       position: relative;
-    }
-    
-    .translation-box::before {
-      content: '';
-      position: absolute;
-      top: -10px;
-      left: -10px;
-      right: -10px;
-      bottom: -10px;
-      background: linear-gradient(45deg, rgba(102, 181, 246, 0.1), rgba(255, 182, 193, 0.1));
-      border-radius: 15px;
-      z-index: -1;
     }
     
     .translation-box h3 {
@@ -262,32 +222,6 @@
       box-shadow: none;
     }
     
-    .loading {
-      display: none;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-    
-    .loading.active {
-      display: block;
-    }
-    
-    .spinner {
-      width: 20px;
-      height: 20px;
-      border: 2px solid #ffffff;
-      border-top: 2px solid transparent;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    
     #status {
       margin-top: 15px;
       padding: 10px;
@@ -350,7 +284,6 @@
       text-align: center;
     }
     
-    /* 음악 제어 버튼 */
     #musicBtn {
       position: fixed;
       top: 20px;
@@ -371,16 +304,6 @@
     #musicBtn:hover {
       background: linear-gradient(45deg, #5aa3f0, #2976cc);
       transform: scale(1.1);
-      box-shadow: 0 6px 20px rgba(102, 181, 246, 0.6);
-    }
-    
-    #musicBtn.playing {
-      animation: musicPulse 1.5s ease-in-out infinite;
-    }
-    
-    @keyframes musicPulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
     }
     
     @media (max-width: 768px) {
@@ -408,58 +331,12 @@
       .features {
         grid-template-columns: 1fr;
       }
-      
-      .language-selector {
-        flex-direction: column;
-        gap: 10px;
-      }
-      
-      .lang-btn {
-        padding: 10px 20px;
-        font-size: 1em;
-      }
-    }
-    
-    @media (max-width: 480px) {
-      #translatorBox {
-        padding: 15px 10px;
-      }
-      
-      #titleSection h1 {
-        font-size: 1.5em;
-      }
-      
-      .translation-box textarea {
-        height: 80px;
-        font-size: 1em;
-      }
-      
-      .character-img {
-        width: 50px;
-        height: 50px;
-      }
-      
-      #logoSection {
-        gap: 10px;
-      }
-      
-      #musicBtn {
-        width: 50px;
-        height: 50px;
-        font-size: 1.2em;
-        top: 10px;
-        right: 10px;
-      }
     }
   </style>
 </head>
 <body>
-  <!-- 배경 장식 캐릭터들 제거 -->
-  
-  <!-- 음악 제어 버튼 -->
   <button id="musicBtn" title="배경음악 재생/일시정지">🎵</button>
   
-  <!-- 배경음악 -->
   <audio id="bgMusic" loop>
     <source src="tayo1.mp3" type="audio/mpeg">
     브라우저가 오디오를 지원하지 않습니다.
@@ -480,16 +357,6 @@
         <p>🚌 타요와 👑 티니핑이 도와주는 재미있는 번역 놀이! 🎉</p>
       </div>
       
-      <!-- API 키 섹션 완전 숨김 -->
-      <div id="apiKeySection" style="display: none;">
-        <h3>🔑 OpenAI API 키 입력</h3>
-        <input type="password" id="apiKeyInput" placeholder="sk-...로 시작하는 API 키를 입력하세요" maxlength="200">
-        <div class="api-help">
-          API 키가 없으시다면 <a href="https://platform.openai.com/api-keys" target="_blank">OpenAI Platform</a>에서 생성하세요<br>
-          입력하신 API 키는 브라우저에만 저장되며 외부로 전송되지 않습니다
-        </div>
-      </div>
-      
       <div id="translationSection">
         <div class="language-selector">
           <button id="korToEngBtn" class="lang-btn active">한국어 → 영어</button>
@@ -508,12 +375,7 @@
           </div>
         </div>
         
-        <button id="translateBtn">
-          <span class="btn-text">번역하기</span>
-          <div class="loading">
-            <div class="spinner"></div>
-          </div>
-        </button>
+        <button id="translateBtn">번역하기</button>
         
         <div id="status">서버에서 안전하게 처리됩니다! 🔐</div>
       </div>
@@ -542,25 +404,18 @@
   <script>
     class KoreanEnglishTranslator {
       constructor() {
-        // 서버에서 API 키 처리
-        this.apiKey = 'server';
         this.currentMode = 'korToEng';
         this.musicPlaying = false;
         this.initializeElements();
         this.bindEvents();
-        this.loadApiKey();
         this.initializeMusic();
       }
       
       initializeElements() {
-        this.apiKeyInput = document.getElementById('apiKeyInput');
         this.inputText = document.getElementById('inputText');
         this.outputText = document.getElementById('outputText');
         this.translateBtn = document.getElementById('translateBtn');
         this.status = document.getElementById('status');
-        this.translationSection = document.getElementById('translationSection');
-        this.loading = document.querySelector('.loading');
-        this.btnText = document.querySelector('.btn-text');
         this.korToEngBtn = document.getElementById('korToEngBtn');
         this.engToKorBtn = document.getElementById('engToKorBtn');
         this.inputLangTitle = document.getElementById('inputLangTitle');
@@ -571,29 +426,9 @@
       
       bindEvents() {
         this.translateBtn.addEventListener('click', this.translateText.bind(this));
-        this.inputText.addEventListener('keypress', this.handleKeyPress.bind(this));
         this.korToEngBtn.addEventListener('click', () => this.switchMode('korToEng'));
         this.engToKorBtn.addEventListener('click', () => this.switchMode('engToKor'));
         this.musicBtn.addEventListener('click', this.toggleMusic.bind(this));
-        
-        // 실시간 번역 (옵션)
-        this.inputText.addEventListener('input', this.debounce(this.autoTranslate.bind(this), 1000));
-      }
-      
-      loadApiKey() {
-        // 서버 방식이므로 바로 활성화
-        this.enableTranslation();
-        this.updateLanguageDisplay();
-      }
-      
-      enableTranslation() {
-        this.translationSection.classList.add('active');
-        this.translateBtn.disabled = false;
-      }
-      
-      disableTranslation() {
-        this.translationSection.classList.remove('active');
-        this.translateBtn.disabled = true;
       }
       
       switchMode(mode) {
@@ -626,12 +461,6 @@
         this.showStatus('');
       }
       
-      handleKeyPress(event) {
-        if (event.key === 'Enter' && event.ctrlKey) {
-          this.translateText();
-        }
-      }
-      
       async translateText() {
         const text = this.inputText.value.trim();
         
@@ -640,55 +469,40 @@
           return;
         }
         
-        this.setLoading(true);
+        this.translateBtn.disabled = true;
         this.showStatus('타요와 티니핑이 번역 중이에요... 🚌👑', 'info');
         
         try {
-          const translation = await this.callOpenAIAPI(text);
-          this.outputText.value = translation;
+          const response = await fetch('/translate', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              text: text,
+              mode: this.currentMode
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error(`서버 오류: ${response.status}`);
+          }
+          
+          const data = await response.json();
+          
+          if (data.error) {
+            throw new Error(data.error);
+          }
+          
+          this.outputText.value = data.translation;
           this.showStatus('와! 번역 완료! 타요와 티니핑이 도와줬어요! 🎉', 'success');
+          
         } catch (error) {
           console.error('Translation error:', error);
           this.showStatus(`번역 중 오류가 발생했습니다: ${error.message}`, 'error');
           this.outputText.value = '';
         } finally {
-          this.setLoading(false);
-        }
-      }
-      
-      // 서버로 번역 요청
-      async callOpenAIAPI(text) {
-        const response = await fetch('/translate', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            text: text,
-            mode: this.currentMode
-          })
-        });
-        
-        if (!response.ok) {
-          throw new Error(`서버 오류: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        if (data.error) {
-          throw new Error(data.error);
-        }
-        
-        return data.translation;
-      }
-      
-      setLoading(isLoading) {
-        this.translateBtn.disabled = isLoading;
-        if (isLoading) {
-          this.loading.classList.add('active');
-          this.btnText.style.opacity = '0';
-        } else {
-          this.loading.classList.remove('active');
-          this.btnText.style.opacity = '1';
+          this.translateBtn.disabled = false;
         }
       }
       
@@ -697,30 +511,8 @@
         this.status.className = type;
       }
       
-      debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-          const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-          };
-          clearTimeout(timeout);
-          timeout = setTimeout(later, wait);
-        };
-      }
-      
-      autoTranslate() {
-        const text = this.inputText.value.trim();
-        if (text && text.length > 5) {
-          this.translateText();
-        }
-      }
-      
-      // 음악 관련 함수들
       initializeMusic() {
-        this.bgMusic.volume = 0.3; // 볼륨 30%로 설정
-        
-        // 사용자 상호작용 후 음악 자동 재생
+        this.bgMusic.volume = 0.3;
         document.addEventListener('click', this.startMusicOnFirstClick.bind(this), { once: true });
       }
       
@@ -739,7 +531,6 @@
       playMusic() {
         this.bgMusic.play().then(() => {
           this.musicPlaying = true;
-          this.musicBtn.classList.add('playing');
           this.musicBtn.textContent = '🎵';
           this.musicBtn.title = '배경음악 일시정지';
         }).catch(error => {
@@ -750,7 +541,6 @@
       pauseMusic() {
         this.bgMusic.pause();
         this.musicPlaying = false;
-        this.musicBtn.classList.remove('playing');
         this.musicBtn.textContent = '🔇';
         this.musicBtn.title = '배경음악 재생';
       }

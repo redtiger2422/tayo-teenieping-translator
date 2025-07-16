@@ -13,30 +13,30 @@ app.get('/', (req, res) => {
 app.post('/translate', (req, res) => {
   console.log('번역 요청 받음:', req.body);
   
-  const { text, from, to } = req.body;
+  const { text, mode } = req.body;  // ← 'mode'로 변경!
   
   // 입력값 확인
   console.log('받은 텍스트:', text);
-  console.log('번역 방향:', from, '→', to);
+  console.log('번역 모드:', mode);
   
   // 임시 번역 결과
-  let translatedText = '';
+  let translation = '';  // ← 'translation'으로 변경!
   
   if (text) {
-    if (from === 'ko' && to === 'en') {
-      translatedText = 'She is cute.'; // 임시 영어 번역
-    } else if (from === 'en' && to === 'ko') {
-      translatedText = '그녀는 귀여워요.'; // 임시 한국어 번역
+    if (mode === 'korToEng') {  // ← 'korToEng'로 변경!
+      translation = 'She is cute.'; // 임시 영어 번역
+    } else if (mode === 'engToKor') {  // ← 'engToKor'로 변경!
+      translation = '그녀는 귀여워요.'; // 임시 한국어 번역
     } else {
-      translatedText = '번역 기능 구현 중입니다...';
+      translation = '번역 기능 구현 중입니다...';
     }
   } else {
-    translatedText = '텍스트를 입력해주세요.';
+    translation = '텍스트를 입력해주세요.';
   }
   
   res.json({
     success: true,
-    translatedText: translatedText
+    translation: translation  // ← 'translation'으로 변경!
   });
 });
 
