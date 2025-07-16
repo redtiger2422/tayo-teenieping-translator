@@ -12,31 +12,38 @@ app.get('/', (req, res) => {
 
 app.post('/translate', (req, res) => {
   console.log('번역 요청 받음:', req.body);
-  
-  const { text, mode } = req.body;  // ← 'mode'로 변경!
-  
-  // 입력값 확인
-  console.log('받은 텍스트:', text);
-  console.log('번역 모드:', mode);
-  
-  // 임시 번역 결과
-  let translation = '';  // ← 'translation'으로 변경!
-  
-  if (text) {
-    if (mode === 'korToEng') {  // ← 'korToEng'로 변경!
-      translation = 'She is cute.'; // 임시 영어 번역
-    } else if (mode === 'engToKor') {  // ← 'engToKor'로 변경!
-      translation = '그녀는 귀여워요.'; // 임시 한국어 번역
-    } else {
-      translation = '번역 기능 구현 중입니다...';
-    }
-  } else {
-    translation = '텍스트를 입력해주세요.';
+  const { text, mode } = req.body;
+
+  // 1. 텍스트가 없는 경우, 오류 응답을 보내고 즉시 종료합니다.
+  if (!text) {
+    console.log('오류: 번역할 텍스트가 없습니다.');
+    // 400: Bad Request (잘못된 요청)
+    return res.status(400).json({ 
+        success: false, 
+        error: '번역할 텍스트를 입력해주세요.' 
+    });
   }
-  
+
+  let translation = '';
+
+  if (mode === 'korToEng') {
+    translation = 'She is cute.'; 
+  } else if (mode === 'engToKor') { 
+    translation = '그녀는 귀여워요.';
+  } else {
+    // 2. 지원하지 않는 모드일 경우, 오류 응답을 보냅니다.
+    console.log('오류: 지원하지 않는 모드입니다.');
+    return res.status(400).json({
+        success: false,
+        error: '지원하지 않는 번역 모드입니다.'
+    });
+  }
+
+  // 3. 모든 검사를 통과한 경우에만 성공 응답을 보냅니다.
+  console.log('번역 성공:', translation);
   res.json({
     success: true,
-    translation: translation  // ← 'translation'으로 변경!
+    translation: translation 
   });
 });
 

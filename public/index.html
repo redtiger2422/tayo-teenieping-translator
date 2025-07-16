@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>타요와 티니핑의 마법 번역기</title>
   <style>
+    /* 디자인 CSS는 요청하신 대로 그대로 유지됩니다. */
     html, body {
       height: 100%;
       margin: 0;
@@ -230,21 +231,25 @@
       font-weight: 500;
       min-height: 20px;
       transition: all 0.3s ease;
+      display: none; /* 기본적으로 숨김 처리 */
     }
     
     #status.success {
+      display: block;
       background: #d4edda;
       color: #155724;
       border: 1px solid #c3e6cb;
     }
     
     #status.error {
+      display: block;
       background: #f8d7da;
       color: #721c24;
       border: 1px solid #f5c6cb;
     }
     
     #status.info {
+      display: block;
       background: #cce7ff;
       color: #004085;
       border: 1px solid #b8daff;
@@ -310,24 +315,19 @@
       #translatorBox {
         padding: 20px 15px;
       }
-      
       #titleSection h1 {
         font-size: 1.8em;
       }
-      
       .translation-container {
         flex-direction: column;
         gap: 15px;
       }
-      
       .translation-box {
         min-width: auto;
       }
-      
       .translation-box textarea {
         height: 100px;
       }
-      
       .features {
         grid-template-columns: 1fr;
       }
@@ -377,7 +377,7 @@
         
         <button id="translateBtn">번역하기</button>
         
-        <div id="status">서버에서 안전하게 처리됩니다! 🔐</div>
+        <div id="status"></div>
       </div>
       
       <div class="features">
@@ -402,6 +402,8 @@
   </div>
   
   <script>
+    // --- 최종 수정된 스크립트 ---
+
     class KoreanEnglishTranslator {
       constructor() {
         this.currentMode = 'korToEng';
@@ -425,10 +427,10 @@
       }
       
       bindEvents() {
-        this.translateBtn.addEventListener('click', this.translateText.bind(this));
+        this.translateBtn.addEventListener('click', () => this.translateText());
         this.korToEngBtn.addEventListener('click', () => this.switchMode('korToEng'));
         this.engToKorBtn.addEventListener('click', () => this.switchMode('engToKor'));
-        this.musicBtn.addEventListener('click', this.toggleMusic.bind(this));
+        this.musicBtn.addEventListener('click', () => this.toggleMusic());
       }
       
       switchMode(mode) {
@@ -458,7 +460,12 @@
       clearTexts() {
         this.inputText.value = '';
         this.outputText.value = '';
-        this.showStatus('');
+        this.showStatus('', ''); // 상태 메시지 초기화
+      }
+      
+      showStatus(message, type = '') {
+        this.status.textContent = message;
+        this.status.className = type; // 클래스를 직접 설정하여 CSS 적용
       }
       
       async translateText() {
@@ -470,6 +477,7 @@
         }
         
         this.translateBtn.disabled = true;
+        this.outputText.value = '';
         this.showStatus('타요와 티니핑이 번역 중이에요... 🚌👑', 'info');
         
         try {
@@ -480,73 +488,71 @@
             },
             body: JSON.stringify({
               text: text,
-              mode: this.currentMode
+              mode: this.currentMode // 서버와 약속된 'mode'를 보냅니다.
             })
           });
           
+          const data = await response.json(); // 서버로부터 응답을 JSON으로 파싱합니다.
+
           if (!response.ok) {
-            throw new Error(`서버 오류: ${response.status}`);
+            // HTTP 상태 코드가 200-299 범위가 아닐 경우 (서버 자체 에러 등)
+            // 서버가 보낸 에러 메시지를 우선적으로 사용합니다.
+            throw new Error(data.error || `서버 응답 오류: ${response.status}`);
           }
           
-          const data = await response.json();
-          
-          if (data.error) {
-            throw new Error(data.error);
+          // 서버와 약속된 'success' 키로 성공 여부를 판단합니다.
+          if (data.success) {
+            // 서버와 약속된 'translation' 키로 번역 결과를 받습니다.
+            this.outputText.value = data.translation; 
+            this.showStatus('와! 번역 완료! 타요와 티니핑이 도와줬어요! 🎉', 'success');
+          } else {
+            // success가 false일 경우, 서버가 보낸 에러 메시지를 표시합니다.
+            throw new Error(data.error || '알 수 없는 오류가 발생했습니다.');
           }
-          
-          this.outputText.value = data.translation;
-          this.showStatus('와! 번역 완료! 타요와 티니핑이 도와줬어요! 🎉', 'success');
           
         } catch (error) {
           console.error('Translation error:', error);
           this.showStatus(`번역 중 오류가 발생했습니다: ${error.message}`, 'error');
-          this.outputText.value = '';
+          this.outputText.value = ''; // 오류 발생 시 출력창을 비웁니다.
         } finally {
+          // 성공하든 실패하든 마지막에 항상 버튼을 다시 활성화합니다.
           this.translateBtn.disabled = false;
         }
       }
       
-      showStatus(message, type = '') {
-        this.status.textContent = message;
-        this.status.className = type;
-      }
-      
+      // --- 음악 관련 코드는 그대로 유지 ---
       initializeMusic() {
         this.bgMusic.volume = 0.3;
-        document.addEventListener('click', this.startMusicOnFirstClick.bind(this), { once: true });
-      }
-      
-      startMusicOnFirstClick() {
-        this.playMusic();
+        // 사용자의 첫 인터랙션 시 음악을 재생하기 위한 설정
+        document.body.addEventListener('click', () => this.playMusic(), { once: true });
       }
       
       toggleMusic() {
-        if (this.musicPlaying) {
-          this.pauseMusic();
-        } else {
+        // 이미 재생 중인지를 musicBtn을 통해 제어하지 않고, 실제 오디오 상태로 제어합니다.
+        if (this.bgMusic.paused) {
           this.playMusic();
+        } else {
+          this.pauseMusic();
         }
       }
       
       playMusic() {
-        this.bgMusic.play().then(() => {
-          this.musicPlaying = true;
-          this.musicBtn.textContent = '🎵';
-          this.musicBtn.title = '배경음악 일시정지';
-        }).catch(error => {
-          console.log('음악 재생 실패:', error);
-        });
+        if (this.bgMusic.paused) {
+           this.bgMusic.play().then(() => {
+            this.musicBtn.textContent = '🎵';
+            this.musicBtn.title = '배경음악 일시정지';
+          }).catch(error => console.log('음악 재생 실패:', error));
+        }
       }
       
       pauseMusic() {
         this.bgMusic.pause();
-        this.musicPlaying = false;
         this.musicBtn.textContent = '🔇';
         this.musicBtn.title = '배경음악 재생';
       }
     }
     
-    // 애플리케이션 초기화
+    // 페이지 로딩이 완료되면 애플리케이션을 초기화합니다.
     document.addEventListener('DOMContentLoaded', () => {
       new KoreanEnglishTranslator();
     });
